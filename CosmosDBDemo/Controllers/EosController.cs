@@ -1,40 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using CosmosDBDemo.Model;
+using CosmosDBDemo.Request;
 using CosmosDBDemo.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace CosmosDBDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EosController : ControllerBase
+    public class BlockController : ControllerBase
     {
         private readonly EosCosmosDBClient _client;
-        public EosController(EosCosmosDBClient client)
+        public BlockController(EosCosmosDBClient client)
         {
             _client = client;
         }
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        
+        public Task<Block> Get(string id)
         {
-            return new string[] { "value1", "value2" };
+            return _client.Blocks.Get(id);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(string id)
-        {
-            return JsonConvert.SerializeObject(_client.Transactions.Get(id));
-        }
-
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public Task<PageResult<Block>> Query(PageRequest request)
         {
+            return _client.Blocks.GetList(request.Token, request.PageSize);
         }
     }
 }
