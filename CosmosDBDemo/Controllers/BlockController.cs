@@ -15,14 +15,15 @@ namespace CosmosDBDemo.Controllers
         {
             _client = client;
         }
-        
+
+        [HttpGet("{id}")]
         public Task<Block> Get(string id)
         {
             return _client.Blocks.Get(id);
         }
 
         [HttpPost]
-        public Task<PageResult<Block>> Query(PageRequest request)
+        public Task<PageResult<Block>> Post([FromBody] PageRequest request)
         {
             return _client.Blocks.GetList(request.Token, request.PageSize);
         }

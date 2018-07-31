@@ -2,6 +2,7 @@
 using CosmosDBDemo.Model;
 using CosmosDBDemo.Request;
 using CosmosDBDemo.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,7 +19,7 @@ namespace CosmosDBDemo.Controllers
             _client = client;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<string> Get(string id)
         {
             var result = JsonConvert.SerializeObject(await _client.Transactions.Get(id));
@@ -26,7 +27,7 @@ namespace CosmosDBDemo.Controllers
         }
 
         [HttpPost]
-        public Task<PageResult<Transaction>> Query(PageRequest request)
+        public Task<PageResult<Transaction>> Post([FromBody] PageRequest request)
         {
             return _client.Transactions.GetList(request.Token, request.PageSize);
         }
