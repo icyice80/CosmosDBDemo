@@ -15,9 +15,9 @@ namespace CosmosDBDemo.Services
 
         #region Properties
 
-        public CosmosDBDocumentCollection<Transaction> Transactions { get; }
+        public CosmosDBDocumentCollection Transactions { get; }
 
-        public CosmosDBDocumentCollection<Block> Blocks { get; }
+        public CosmosDBDocumentCollection Blocks { get; }
 
         #endregion
 
@@ -25,8 +25,8 @@ namespace CosmosDBDemo.Services
         {
             _options = options.Value;
             _client = new DocumentClient(new Uri(_options.EndpointUri), _options.PrimaryKey);
-            Transactions = new CosmosDBDocumentCollection<Transaction>(_client,_options.DatabaseId, TransactionCollectionId);
-            Blocks = new CosmosDBDocumentCollection<Block>(_client, _options.DatabaseId, BlockCollectionId);
+            Transactions = new CosmosDBDocumentCollection(_client,_options.DatabaseId, TransactionCollectionId);
+            Blocks = new CosmosDBDocumentCollection(_client, _options.DatabaseId, BlockCollectionId);
         }
     }
 }

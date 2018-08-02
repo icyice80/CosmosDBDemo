@@ -3,6 +3,7 @@ using CosmosDBDemo.Model;
 using CosmosDBDemo.Request;
 using CosmosDBDemo.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 
 namespace CosmosDBDemo.Controllers
 {
@@ -17,13 +18,13 @@ namespace CosmosDBDemo.Controllers
         }
 
         [HttpGet("{id}")]
-        public Task<Block> Get(string id)
+        public Task<Document> Get(string id)
         {
             return _client.Blocks.Get(id);
         }
 
         [HttpPost]
-        public Task<PageResult<Block>> Post([FromBody] PageRequest request)
+        public Task<PageResult> Post([FromBody] PageRequest request)
         {
             return _client.Blocks.GetList(request.Token, request.PageSize);
         }

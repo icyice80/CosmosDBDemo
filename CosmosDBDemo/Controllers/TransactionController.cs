@@ -2,9 +2,8 @@
 using CosmosDBDemo.Model;
 using CosmosDBDemo.Request;
 using CosmosDBDemo.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Azure.Documents;
 
 namespace CosmosDBDemo.Controllers
 {
@@ -20,14 +19,13 @@ namespace CosmosDBDemo.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<string> Get(string id)
+        public Task<Document> Get(string id)
         {
-            var result = JsonConvert.SerializeObject(await _client.Transactions.Get(id));
-            return result;
+            return _client.Transactions.Get(id);
         }
 
         [HttpPost]
-        public Task<PageResult<Transaction>> Post([FromBody] PageRequest request)
+        public Task<PageResult> Post([FromBody] PageRequest request)
         {
             return _client.Transactions.GetList(request.Token, request.PageSize);
         }

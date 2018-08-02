@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CosmosDBDemo.Model;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
 namespace CosmosDBDemo.Services
 {
-    public class CosmosDBDocumentCollection<T> where T : class
+    public class CosmosDBDocumentCollection
     {
         #region Fields
         private readonly DocumentClient _client;
@@ -29,23 +30,23 @@ namespace CosmosDBDemo.Services
 
         #region Methods
 
-        public async Task<T> Get(string id)
+        public async Task<Document> Get(string id)
         {
-            return await _client.ReadDocumentAsync<T>(UriFactory.CreateDocumentUri(this._databaseId,this._collectionId,id));
+            return await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(this._databaseId,this._collectionId,id));
         }
 
 
-        public async Task<PageResult<T>> GetList(string continuationToken, int pageSize)
+        public async Task<PageResult> GetList(string continuationToken, int pageSize)
         {
             var feedOptions = new FeedOptions {MaxItemCount = pageSize, RequestContinuation = continuationToken};
 
             var transactions = this._client.CreateDocumentQuery(this._collectionUri, feedOptions).AsDocumentQuery();
 
-            var result = new PageResult<T>();
+            var result = new PageResult();
 
             if (transactions.HasMoreResults)
             {
-                var list = await transactions.ExecuteNextAsync<T>();
+                var list = await transactions.ExecuteNextAsync();
                 result.ContinuationToken = list.ResponseContinuation;
 
                 if (!string.IsNullOrWhiteSpace(result.ContinuationToken))
@@ -53,7 +54,7 @@ namespace CosmosDBDemo.Services
                     result.HasMore = true;
                 }
 
-                ((List<T>)result.Results).AddRange(list);
+                result.Results = list;
             }
            
             return result;
